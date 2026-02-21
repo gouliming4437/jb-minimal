@@ -66,37 +66,32 @@ function jb_minimal_customize_register($wp_customize) {
 
     // --- Social Links Section ---
     $wp_customize->add_section('jb_social', array(
-        'title' => __('Social Links', 'jb-minimal'),
-        'priority' => 120,
+        'title'       => __('Social Links', 'jb-minimal'),
+        'description' => __('Add up to 5 links. Leave a label or URL blank to hide that slot.', 'jb-minimal'),
+        'priority'    => 120,
     ));
 
-    $socials = array(
-        'twitter'  => 'Twitter / X URL',
-        'github'   => 'GitHub URL',
-        'linkedin' => 'LinkedIn URL',
-    );
+    for ($i = 1; $i <= 5; $i++) {
+        $wp_customize->add_setting("jb_social_{$i}_label", array(
+            'default'           => '',
+            'sanitize_callback' => 'sanitize_text_field',
+        ));
+        $wp_customize->add_control("jb_social_{$i}_label", array(
+            'label'   => sprintf(__('Link %d Label', 'jb-minimal'), $i),
+            'section' => 'jb_social',
+            'type'    => 'text',
+        ));
 
-    foreach ($socials as $key => $label) {
-        $wp_customize->add_setting("jb_social_{$key}", array(
-            'default' => '',
+        $wp_customize->add_setting("jb_social_{$i}_url", array(
+            'default'           => '',
             'sanitize_callback' => 'esc_url_raw',
         ));
-        $wp_customize->add_control("jb_social_{$key}", array(
-            'label'   => __($label, 'jb-minimal'),
+        $wp_customize->add_control("jb_social_{$i}_url", array(
+            'label'   => sprintf(__('Link %d URL', 'jb-minimal'), $i),
             'section' => 'jb_social',
             'type'    => 'url',
         ));
     }
-
-    $wp_customize->add_setting('jb_social_rss', array(
-        'default' => true,
-        'sanitize_callback' => 'jb_minimal_sanitize_checkbox',
-    ));
-    $wp_customize->add_control('jb_social_rss', array(
-        'label'   => __('Show RSS Link', 'jb-minimal'),
-        'section' => 'jb_social',
-        'type'    => 'checkbox',
-    ));
 
     // --- Homepage Section ---
     $wp_customize->add_section('jb_homepage', array(
@@ -178,17 +173,12 @@ add_action('wp_head', 'jb_minimal_customizer_css');
 function jb_minimal_social_links() {
     $links = array();
 
-    $twitter = get_theme_mod('jb_social_twitter', '');
-    if ($twitter) $links[] = '<a href="' . esc_url($twitter) . '" rel="noopener noreferrer" target="_blank">Twitter</a>';
-
-    $github = get_theme_mod('jb_social_github', '');
-    if ($github) $links[] = '<a href="' . esc_url($github) . '" rel="noopener noreferrer" target="_blank">GitHub</a>';
-
-    $linkedin = get_theme_mod('jb_social_linkedin', '');
-    if ($linkedin) $links[] = '<a href="' . esc_url($linkedin) . '" rel="noopener noreferrer" target="_blank">LinkedIn</a>';
-
-    if (get_theme_mod('jb_social_rss', true)) {
-        $links[] = '<a href="' . esc_url(get_bloginfo('rss2_url')) . '">RSS</a>';
+    for ($i = 1; $i <= 5; $i++) {
+        $label = trim(get_theme_mod("jb_social_{$i}_label", ''));
+        $url   = trim(get_theme_mod("jb_social_{$i}_url", ''));
+        if ($label && $url) {
+            $links[] = '<a href="' . esc_url($url) . '" rel="noopener noreferrer" target="_blank">' . esc_html($label) . '</a>';
+        }
     }
 
     if (!empty($links)) {
