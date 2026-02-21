@@ -161,6 +161,9 @@ a:hover {
 }
 
 @media (min-width: 768px) {
+  .site-sidebar {
+    padding: 32px 24px;
+  }
   .site-content {
     padding: 32px 32px 32px 48px;
   }
@@ -197,18 +200,28 @@ hr {
 img {
   max-width: 100%;
   height: auto;
+  display: block;
+}
+
+.site-content img {
+  transition: opacity 0.15s ease;
+}
+
+.site-content img:hover {
+  opacity: 0.85;
 }
 
 figure {
-  margin: 1.5rem 0;
+  margin: 2rem 0;
 }
 
 figcaption {
   font-size: 0.75rem;
   color: var(--jb-text, #262626);
-  opacity: 0.7;
-  margin-top: 0.5rem;
+  opacity: 0.6;
+  margin-top: 0.625rem;
   text-align: center;
+  font-style: italic;
 }
 
 .alignleft {
@@ -381,23 +394,23 @@ li {
   opacity: 1;
 }
 
-/* === Social Links === */
+/* === Social Links (homepage main content) === */
 .social-links {
-  font-size: 0.75rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   display: flex;
-  gap: 12px;
+  flex-direction: row;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
 .social-links a {
   color: var(--jb-text, #262626);
-  opacity: 0.6;
+  text-decoration: underline;
   transition: opacity 0.15s ease;
 }
 
 .social-links a:hover {
-  opacity: 1;
+  opacity: 0.6;
 }
 
 /* === Pagination === */
@@ -461,11 +474,6 @@ li {
 }
 
 /* === WordPress Core Alignment === */
-.wp-block-image figcaption {
-  font-size: 0.75rem;
-  text-align: center;
-  opacity: 0.7;
-}
 
 .wp-block-table {
   overflow-x: auto;
