@@ -479,6 +479,24 @@ li {
   overflow-x: auto;
 }
 
+/* === Site Footer === */
+.site-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--jb-border, #e5e5e5);
+  font-size: 0.75rem;
+  color: #737373;
+}
+
+.site-footer a {
+  color: #737373;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--jb-heading, #171717);
+}
+
 /* === CSS Custom Properties (set by Customizer) === */
 :root {
   --jb-text: #262626;
