@@ -31,7 +31,7 @@ A minimal, clean WordPress theme inspired by [joshbradley.me](https://joshbradle
 ## Customizer Options
 
 - **Colors**: Text, heading, and border colors
-- **Social Links**: Twitter/X, GitHub, LinkedIn, RSS
+- **Social Links**: Up to 5 custom links with user-defined labels and URLs
 - **Homepage**: Bio text, social links toggle
 - **Blog**: Show/hide post dates and comments
 
