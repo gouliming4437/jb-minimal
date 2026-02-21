@@ -1,0 +1,22 @@
+# Build artifact
+jb-minimal.zip
+
+# macOS
+.DS_Store
+
+# Editor
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Planning files
+task_plan.md
+findings.md
+progress.md
+.claude/
+docs/
