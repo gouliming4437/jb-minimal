@@ -10,6 +10,10 @@
             </div>
         </article>
     <?php endwhile; ?>
+    <hr>
+    <?php if (get_theme_mod('jb_show_social_home', true)) : ?>
+        <?php jb_minimal_social_links(); ?>
+    <?php endif; ?>
 <?php else : ?>
     <h1><?php echo esc_html(get_bloginfo('name')); ?></h1>
     <?php
@@ -21,11 +25,9 @@
         </div>
     <?php endif; ?>
     <hr>
-    <?php
-    if (get_theme_mod('jb_show_social_home', true)) {
-        jb_minimal_social_links();
-    }
-    ?>
+    <?php if (get_theme_mod('jb_show_social_home', true)) : ?>
+        <?php jb_minimal_social_links(); ?>
+    <?php endif; ?>
 <?php endif; ?>
 
 <?php get_footer(); ?>
