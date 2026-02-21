@@ -1,0 +1,481 @@
+/*
+Theme Name: JB Minimal
+Theme URI: https://github.com/yourname/jb-minimal
+Author: Your Name
+Author URI: https://yoursite.com
+Description: A minimal, clean WordPress theme inspired by joshbradley.me. Supports Customizer for colors, social links, and layout settings.
+Version: 1.0.1
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: jb-minimal
+Requires at least: 6.0
+Requires PHP: 7.4
+*/
+
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--jb-text, #262626);
+  background: var(--jb-bg, #ffffff);
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+a {
+  color: var(--jb-text, #262626);
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--jb-link-hover, #000000);
+}
+
+/* === Layout === */
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+@media (min-width: 640px) {
+  .site-wrapper {
+    flex-direction: row;
+  }
+}
+
+/* --- Sidebar Nav --- */
+.site-sidebar {
+  padding: 16px;
+}
+
+@media (min-width: 640px) {
+  .site-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+}
+
+.site-sidebar nav {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 640px) {
+  .site-sidebar nav {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* wp_nav_menu outputs <li> wrappers — make them invisible to flex */
+.site-sidebar nav li {
+  list-style: none;
+  display: contents;
+}
+
+.site-sidebar nav a {
+  text-decoration: none;
+  color: #a3a3a3;
+  font-size: 0.875rem;
+  font-weight: 400;
+  transition: color 0.15s ease;
+}
+
+.site-sidebar nav a:hover {
+  color: #525252;
+}
+
+/* Active page — cover all WordPress menu class variations */
+.site-sidebar nav .current-menu-item > a,
+.site-sidebar nav .current_page_item > a,
+.site-sidebar nav .current-menu-ancestor > a,
+.site-sidebar nav .current_page_ancestor > a,
+.site-sidebar nav .current-menu-parent > a,
+.site-sidebar nav .current_page_parent > a,
+.site-sidebar nav .current-post-ancestor > a,
+.site-sidebar nav a[aria-current="page"] {
+  color: #000000;
+  font-weight: 500;
+}
+
+/* --- Sidebar Search --- */
+.sidebar-search {
+  margin-top: 16px;
+}
+
+.sidebar-search input[type="search"] {
+  width: 100%;
+  padding: 4px 0;
+  border: none;
+  border-bottom: 1px solid var(--jb-border, #e5e5e5);
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.75rem;
+  color: var(--jb-text, #262626);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.sidebar-search input[type="search"]::placeholder {
+  color: #a3a3a3;
+}
+
+.sidebar-search input[type="search"]:focus {
+  border-bottom-color: var(--jb-heading, #171717);
+}
+
+/* --- Content Area --- */
+.site-content {
+  flex: 1;
+  max-width: 672px;
+  padding: 16px;
+}
+
+@media (min-width: 640px) {
+  .site-content {
+    border-left: 1px solid var(--jb-border, #e5e5e5);
+    padding: 24px 24px 24px 32px;
+  }
+}
+
+@media (min-width: 768px) {
+  .site-content {
+    padding: 32px 32px 32px 48px;
+  }
+}
+
+/* === Typography === */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--jb-heading, #171717);
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: left;
+}
+
+h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+h2 { font-size: 1.25rem; margin: 1.5rem 0 0.5rem; }
+h3 { font-size: 1.125rem; margin: 1.25rem 0 0.5rem; }
+h4 { font-size: 1rem; margin: 1rem 0 0.5rem; }
+h5 { font-size: 0.875rem; margin: 1rem 0 0.5rem; }
+h6 { font-size: 0.8rem; margin: 1rem 0 0.5rem; }
+
+p {
+  margin-bottom: 1rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--jb-border, #e5e5e5);
+  margin: 2rem 0;
+}
+
+/* === Content Elements === */
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+figure {
+  margin: 1.5rem 0;
+}
+
+figcaption {
+  font-size: 0.75rem;
+  color: var(--jb-text, #262626);
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.alignleft {
+  float: left;
+  margin: 0.5rem 1.5rem 1rem 0;
+}
+
+.alignright {
+  float: right;
+  margin: 0.5rem 0 1rem 1.5rem;
+}
+
+.aligncenter {
+  display: block;
+  margin: 1.5rem auto;
+}
+
+.alignwide {
+  max-width: 100%;
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
+.alignfull {
+  max-width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+th, td {
+  border: 1px solid var(--jb-border, #e5e5e5);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+th {
+  font-weight: 500;
+  color: var(--jb-heading, #171717);
+}
+
+tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 3px solid var(--jb-heading, #171717);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+}
+
+blockquote footer,
+blockquote cite {
+  display: block;
+  font-size: 0.75rem;
+  font-style: normal;
+  color: #737373;
+  margin-top: 0.5rem;
+}
+
+/* Code */
+pre {
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+code {
+  font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+}
+
+p code, li code {
+  background: #f5f5f5;
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+}
+
+/* Lists */
+ul, ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.25rem;
+}
+
+/* Galleries */
+.wp-block-gallery {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  margin: 1.5rem 0;
+}
+
+/* === Archive Description === */
+.archive-description {
+  color: #a3a3a3;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+/* === Post Listing === */
+.post-list {
+  list-style: none;
+  padding: 0;
+}
+
+.post-list-item {
+  position: relative;
+  padding: 12px 0;
+}
+
+.post-list-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-top: 1px solid var(--jb-border, #e5e5e5);
+  transition: border-color 0.15s ease;
+}
+
+.post-list-item:hover::before {
+  border-color: var(--jb-heading, #171717);
+}
+
+.post-list-item a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  text-decoration: none;
+  gap: 1rem;
+}
+
+.post-list-item .post-title {
+  color: var(--jb-heading, #171717);
+  font-weight: 400;
+}
+
+.post-list-item .post-date {
+  color: var(--jb-text, #262626);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0.6;
+}
+
+.post-list-item:hover .post-title,
+.post-list-item:hover .post-date {
+  color: var(--jb-heading, #171717);
+  opacity: 1;
+}
+
+/* === Social Links === */
+.social-links {
+  font-size: 0.75rem;
+  margin-top: 2rem;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.social-links a {
+  color: var(--jb-text, #262626);
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.social-links a:hover {
+  opacity: 1;
+}
+
+/* === Pagination === */
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+/* === Comments === */
+.comments-area {
+  margin-top: 3rem;
+  border-top: 1px solid var(--jb-border, #e5e5e5);
+  padding-top: 2rem;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+}
+
+.comment {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--jb-border, #e5e5e5);
+}
+
+.comment-meta {
+  font-size: 0.75rem;
+  color: #737373;
+  margin-bottom: 0.5rem;
+}
+
+/* === 404 & Search === */
+.not-found, .search-header {
+  text-align: left;
+}
+
+.search-form {
+  display: flex;
+  gap: 8px;
+  margin: 1rem 0;
+}
+
+.search-form input[type="search"] {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--jb-border, #e5e5e5);
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.search-form button {
+  padding: 0.5rem 1rem;
+  background: var(--jb-heading, #171717);
+  color: #fff;
+  border: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* === WordPress Core Alignment === */
+.wp-block-image figcaption {
+  font-size: 0.75rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.wp-block-table {
+  overflow-x: auto;
+}
+
+/* === CSS Custom Properties (set by Customizer) === */
+:root {
+  --jb-text: #262626;
+  --jb-heading: #171717;
+  --jb-border: #e5e5e5;
+  --jb-link-hover: #000000;
+  --jb-bg: #ffffff;
+}
