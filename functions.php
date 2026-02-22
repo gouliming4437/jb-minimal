@@ -159,10 +159,12 @@ function jb_minimal_customizer_css() {
     $border  = get_theme_mod('jb_border_color', '#e5e5e5');
     ?>
     <style>
-        :root {
-            --jb-text: <?php echo esc_attr($text); ?>;
-            --jb-heading: <?php echo esc_attr($heading); ?>;
-            --jb-border: <?php echo esc_attr($border); ?>;
+        @media (prefers-color-scheme: light) {
+            :root {
+                --jb-text: <?php echo esc_attr($text); ?>;
+                --jb-heading: <?php echo esc_attr($heading); ?>;
+                --jb-border: <?php echo esc_attr($border); ?>;
+            }
         }
     </style>
     <?php
