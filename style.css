@@ -279,12 +279,53 @@ tr:nth-child(even) {
 }
 
 /* Blockquotes */
-blockquote {
-  border-left: 3px solid var(--jb-heading, #171717);
+blockquote,
+.wp-block-quote {
+  position: relative;
+  border: none !important;
   padding-left: 1rem;
   margin: 1.5rem 0;
   font-family: Georgia, "Times New Roman", serif;
   font-style: italic;
+}
+
+/* Mobile: no panel divider, so use a slim black left border instead */
+@media (max-width: 639px) {
+  blockquote,
+  .wp-block-quote {
+    border-left: 1px solid #000 !important;
+  }
+}
+
+/* At 640px+ the panel divider appears; overlay it black at blockquote position */
+@media (min-width: 640px) {
+  blockquote::before,
+  .wp-block-quote::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -33px; /* -(32px padding + 1px border) */
+    width: 1px;
+    background: #000;
+  }
+}
+
+@media (min-width: 768px) {
+  blockquote::before,
+  .wp-block-quote::before {
+    left: -49px; /* -(48px padding + 1px border) */
+  }
+}
+
+blockquote > p:first-child::before,
+.wp-block-quote > p:first-child::before {
+  content: '\201C';
+}
+
+blockquote > p:last-of-type::after,
+.wp-block-quote > p:last-of-type::after {
+  content: '\201D';
 }
 
 blockquote footer,

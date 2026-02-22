@@ -22,6 +22,11 @@
             var h = document.createElement('h2');
             h.textContent = 'Reference';
             fn.parentNode.insertBefore(h, fn);
+            var prev = h.previousElementSibling;
+            if (!prev || prev.tagName !== 'HR') {
+                var hr = document.createElement('hr');
+                h.parentNode.insertBefore(hr, h);
+            }
         }
     })();
     </script>
