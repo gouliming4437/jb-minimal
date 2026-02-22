@@ -157,14 +157,17 @@ function jb_minimal_customizer_css() {
     $text    = get_theme_mod('jb_text_color', '#262626');
     $heading = get_theme_mod('jb_heading_color', '#171717');
     $border  = get_theme_mod('jb_border_color', '#e5e5e5');
+
+    // Skip output entirely when nothing has been customised.
+    if ( $text === '#262626' && $heading === '#171717' && $border === '#e5e5e5' ) {
+        return;
+    }
     ?>
     <style>
-        @media (prefers-color-scheme: light) {
-            :root {
-                --jb-text: <?php echo esc_attr($text); ?>;
-                --jb-heading: <?php echo esc_attr($heading); ?>;
-                --jb-border: <?php echo esc_attr($border); ?>;
-            }
+        :root {
+            --jb-text: <?php echo esc_attr($text); ?>;
+            --jb-heading: <?php echo esc_attr($heading); ?>;
+            --jb-border: <?php echo esc_attr($border); ?>;
         }
     </style>
     <?php
@@ -209,12 +212,27 @@ function jb_minimal_archives_shortcode($atts) {
         'year'     => '',
     ), $atts, 'jb_archives');
 
-    $args = array(
-        'post_type'      => 'post',
-        'post_status'    => 'publish',
-        'posts_per_page' => intval($atts['limit']),
-        'orderby'        => 'date',
-        'order'          => 'DESC',
+    // Serve from cache when available.
+    // The version prefix means invalidation only requires bumping the version —
+    // no need to know or delete individual cache keys. This works correctly
+    // whether transients are stored in wp_options or a persistent cache (Memcached/Redis).
+    $version   = (int) get_option('jb_arc_cache_ver', 0);
+    $cache_key = 'jb_arc_' . $version . '_' . md5(serialize($atts));
+    $cached    = get_transient($cache_key);
+    if ( false !== $cached ) {
+        return $cached;
+    }
+
+    $limit = intval($atts['limit']);
+    $args  = array(
+        'post_type'              => 'post',
+        'post_status'            => 'publish',
+        'posts_per_page'         => ($limit < 0) ? 500 : $limit,
+        'orderby'                => 'date',
+        'order'                  => 'DESC',
+        'no_found_rows'          => true,  // skip SQL_CALC_FOUND_ROWS — we don't paginate
+        'update_post_term_cache' => false, // skip priming term cache — not used in output
+        'update_post_meta_cache' => false, // skip priming meta cache — not used in output
     );
 
     if (!empty($atts['category'])) {
@@ -233,20 +251,23 @@ function jb_minimal_archives_shortcode($atts) {
 
     $grouped = array();
     foreach ($posts as $post) {
-        $year = get_the_date('Y', $post);
-        $grouped[$year][] = $post;
+        $ts   = strtotime($post->post_date);
+        $year = date('Y', $ts);
+        $grouped[$year][] = array('post' => $post, 'ts' => $ts);
     }
 
     $output = '';
     foreach ($grouped as $year => $year_posts) {
         $output .= '<h2>' . esc_html($year) . '</h2>';
         $output .= '<ul class="post-list">';
-        foreach ($year_posts as $post) {
+        foreach ($year_posts as $entry) {
+            $post = $entry['post'];
+            $ts   = $entry['ts'];
             $output .= '<li class="post-list-item">';
             $output .= '<a href="' . esc_url(get_permalink($post)) . '">';
             $output .= '<span class="post-title">' . esc_html(get_the_title($post)) . '</span>';
-            $output .= '<time class="post-date" datetime="' . esc_attr(get_the_date('c', $post)) . '">';
-            $output .= esc_html(get_the_date('M j, Y', $post));
+            $output .= '<time class="post-date" datetime="' . esc_attr(date('c', $ts)) . '">';
+            $output .= esc_html(date('M j, Y', $ts));
             $output .= '</time>';
             $output .= '</a>';
             $output .= '</li>';
@@ -254,10 +275,60 @@ function jb_minimal_archives_shortcode($atts) {
         $output .= '</ul>';
     }
 
-    wp_reset_postdata();
+    set_transient($cache_key, $output, DAY_IN_SECONDS);
     return $output;
 }
 add_shortcode('jb_archives', 'jb_minimal_archives_shortcode');
+
+// === Archive Cache Invalidation ===
+// Bumping the version makes every existing jb_arc_* key unreachable without
+// needing to know or enumerate them — safe for both Memcached/Redis (where
+// transients live in the object cache, not wp_options) and the default
+// options-table storage.
+function jb_minimal_flush_archive_cache() {
+    update_option('jb_arc_cache_ver', time(), true); // autoloaded = free to read
+
+    // On sites without a persistent cache plugin, old transient rows accumulate
+    // in wp_options. Clean them up. With a persistent cache active, transients
+    // are in Memcached/Redis (not the options table), so we skip the query.
+    if ( ! wp_using_ext_object_cache() ) {
+        global $wpdb;
+        $wpdb->query(
+            "DELETE FROM {$wpdb->options}
+             WHERE option_name LIKE '_transient_jb_arc_%'
+                OR option_name LIKE '_transient_timeout_jb_arc_%'"
+        );
+    }
+}
+add_action('save_post_post', 'jb_minimal_flush_archive_cache');
+add_action('delete_post',    'jb_minimal_flush_archive_cache');
+add_action('trash_post',     'jb_minimal_flush_archive_cache');
+add_action('untrash_post',   'jb_minimal_flush_archive_cache');
+
+// === Remove Unused WordPress Overhead ===
+// Emoji polyfill: ~10 KB of JS + a DNS prefetch to s.w.org on every page.
+// Removed from the front-end only; the block editor keeps its emoji picker.
+function jb_minimal_disable_emoji() {
+    remove_action('wp_head',         'print_emoji_detection_script', 7);
+    remove_action('wp_print_styles', 'print_emoji_styles');
+    remove_filter('the_content_feed', 'wp_staticize_emoji');
+    remove_filter('comment_text_rss', 'wp_staticize_emoji');
+    remove_filter('wp_mail',          'wp_staticize_emoji_for_email');
+    add_filter('wp_resource_hints',  'jb_minimal_remove_emoji_dns_prefetch', 10, 2);
+}
+add_action('init', 'jb_minimal_disable_emoji');
+
+function jb_minimal_remove_emoji_dns_prefetch($urls, $relation_type) {
+    if ('dns-prefetch' === $relation_type) {
+        $urls = array_filter($urls, function($url) {
+            return strpos($url, 'https://s.w.org') === false;
+        });
+    }
+    return $urls;
+}
+
+// wp-embed: ~3 KB of JS for embedding your posts on other sites — not needed here.
+add_action('wp_footer', function() { wp_dequeue_script('wp-embed'); });
 
 // === Clean Archive Titles ===
 function jb_minimal_archive_title($title) {

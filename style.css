@@ -585,9 +585,9 @@ li {
 @media (prefers-color-scheme: dark) {
   :root {
     --jb-text: #d4d4d4;
-    --jb-heading: #f5f5f5;
+    --jb-heading: #e5e5e5;
     --jb-border: #2a2a2a;
-    --jb-link-hover: #ffffff;
+    --jb-link-hover: #e5e5e5;
     --jb-bg: #0f0f0f;
   }
 
@@ -602,7 +602,7 @@ li {
   .site-sidebar nav .current-menu-parent > a,
   .site-sidebar nav .current_page_parent > a,
   .site-sidebar nav .current-post-ancestor > a,
-  .site-sidebar nav a[aria-current="page"] { color: #f5f5f5; }
+  .site-sidebar nav a[aria-current="page"] { color: #e5e5e5; }
 
   /* Code blocks */
   pre              { background: #1a1a1a; }
@@ -632,4 +632,23 @@ li {
 @media (prefers-color-scheme: dark) and (min-width: 640px) {
   blockquote::before,
   .wp-block-quote::before { background: var(--jb-heading); }
+}
+
+/* === Page Transitions === */
+@view-transition {
+  navigation: auto;
+}
+
+/* Match the theme's existing 0.15s motion rhythm */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.15s;
+}
+
+/* Respect the user's OS motion preference */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }

@@ -42,6 +42,26 @@
             });
         })();
         </script>
+        <!-- Prefetch nav pages on hover (Chrome 121+) -->
+        <script type="speculationrules">
+        {"prefetch":[{"source":"document","where":{"selector_matches":".site-sidebar nav a"},"eagerness":"moderate"}]}
+        </script>
+        <!-- Fallback: manual prefetch for browsers without Speculation Rules -->
+        <script>
+        (function(){
+            if(HTMLScriptElement.supports&&HTMLScriptElement.supports('speculationrules'))return;
+            var seen={};
+            document.querySelectorAll('.site-sidebar nav a').forEach(function(a){
+                a.addEventListener('mouseover',function(){
+                    if(seen[a.href])return;
+                    seen[a.href]=true;
+                    var l=document.createElement('link');
+                    l.rel='prefetch';l.href=a.href;
+                    document.head.appendChild(l);
+                });
+            });
+        })();
+        </script>
     </aside>
 
     <main class="site-content">
