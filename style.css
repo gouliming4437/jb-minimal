@@ -38,11 +38,14 @@ body {
 a {
   color: var(--jb-text, #262626);
   text-decoration: underline;
-  transition: color 0.15s ease;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(0, 0, 0, 0.25);
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
 a:hover {
   color: var(--jb-link-hover, #000000);
+  text-decoration-color: rgba(0, 0, 0, 0.6);
 }
 
 /* === Layout === */
@@ -545,4 +548,53 @@ li {
   --jb-border: #e5e5e5;
   --jb-link-hover: #000000;
   --jb-bg: #ffffff;
+}
+
+/* === Dark Mode === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --jb-text: #d4d4d4;
+    --jb-heading: #f5f5f5;
+    --jb-border: #2a2a2a;
+    --jb-link-hover: #ffffff;
+    --jb-bg: #0f0f0f;
+  }
+
+  /* Nav links — invert the muted/active hierarchy */
+  .site-sidebar nav a              { color: #525252; }
+  .site-sidebar nav a:hover        { color: #a3a3a3; }
+
+  .site-sidebar nav .current-menu-item > a,
+  .site-sidebar nav .current_page_item > a,
+  .site-sidebar nav .current-menu-ancestor > a,
+  .site-sidebar nav .current_page_ancestor > a,
+  .site-sidebar nav .current-menu-parent > a,
+  .site-sidebar nav .current_page_parent > a,
+  .site-sidebar nav .current-post-ancestor > a,
+  .site-sidebar nav a[aria-current="page"] { color: #f5f5f5; }
+
+  /* Code blocks */
+  pre              { background: #1a1a1a; }
+  p code, li code  { background: #1a1a1a; }
+
+  /* Table stripes */
+  tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
+
+  /* Link underline — flip to white-based in dark */
+  a                    { text-decoration-color: rgba(255, 255, 255, 0.2); }
+  a:hover              { text-decoration-color: rgba(255, 255, 255, 0.6); }
+
+  /* Search button: heading color is now near-white, so flip text to bg color */
+  .search-form button { color: var(--jb-bg); }
+}
+
+/* Blockquote decorative line — handled per breakpoint to avoid nesting */
+@media (prefers-color-scheme: dark) and (max-width: 639px) {
+  blockquote,
+  .wp-block-quote { border-left-color: var(--jb-heading) !important; }
+}
+
+@media (prefers-color-scheme: dark) and (min-width: 640px) {
+  blockquote::before,
+  .wp-block-quote::before { background: var(--jb-heading); }
 }
