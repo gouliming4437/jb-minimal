@@ -20,7 +20,7 @@
         var fn = document.querySelector(sel);
         if (fn) {
             var h = document.createElement('h2');
-            h.textContent = 'Reference';
+            h.textContent = 'References';
             fn.parentNode.insertBefore(h, fn);
             var prev = h.previousElementSibling;
             if (!prev || prev.tagName !== 'HR') {
