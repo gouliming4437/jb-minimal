@@ -634,21 +634,3 @@ li {
   .wp-block-quote::before { background: var(--jb-heading); }
 }
 
-/* === Page Transitions === */
-@view-transition {
-  navigation: auto;
-}
-
-/* Match the theme's existing 0.15s motion rhythm */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.15s;
-}
-
-/* Respect the user's OS motion preference */
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
-}
