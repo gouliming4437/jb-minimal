@@ -258,7 +258,10 @@ function jb_minimal_archives_shortcode($atts) {
 
     $output = '';
     foreach ($grouped as $year => $year_posts) {
-        $output .= '<h2>' . esc_html($year) . '</h2>';
+        $count   = count($year_posts);
+        $output .= '<h2 class="archive-year-label">' . esc_html($year);
+        $output .= ' <span class="archive-year-count">&middot; ' . $count . '</span>';
+        $output .= '</h2>';
         $output .= '<ul class="post-list">';
         foreach ($year_posts as $entry) {
             $post = $entry['post'];

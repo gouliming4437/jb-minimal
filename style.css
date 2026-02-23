@@ -385,6 +385,22 @@ li {
   margin-bottom: 1rem;
 }
 
+/* === Archive Year Label === */
+.archive-year-label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #a3a3a3;
+  letter-spacing: 0.04em;
+  margin: 2rem 0 0;
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid var(--jb-border, #e5e5e5);
+}
+
+.archive-year-count {
+  margin-left: 0.375rem;
+  opacity: 0.6;
+}
+
 /* === Post Listing === */
 .post-list {
   list-style: none;
@@ -396,17 +412,17 @@ li {
   padding: 12px 0;
 }
 
-.post-list-item::before {
+.post-list-item::after {
   content: "";
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   width: 100%;
-  border-top: 1px solid var(--jb-border, #e5e5e5);
+  border-bottom: 1px solid var(--jb-border, #e5e5e5);
   transition: border-color 0.15s ease;
 }
 
-.post-list-item:hover::before {
+.post-list-item:hover::after {
   border-color: var(--jb-heading, #171717);
 }
 
@@ -621,6 +637,9 @@ li {
   /* TOC links — lighter than sidebar nav to stay readable on dark bg */
   .toc a       { color: #737373; }
   .toc a:hover { color: #a3a3a3; }
+
+  /* Archive year label — muted relative to dark bg */
+  .archive-year-label { color: #525252; }
 }
 
 /* Blockquote decorative line — handled per breakpoint to avoid nesting */
