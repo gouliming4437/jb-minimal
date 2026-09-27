@@ -346,6 +346,66 @@ function jb_minimal_archive_title($title) {
 }
 add_filter('get_the_archive_title', 'jb_minimal_archive_title');
 
+// === Table of Contents ===
+// Adds ids to h2/h3 headings and builds a nested TOC server-side.
+// Returns array(toc_html, content); toc_html is '' when there are fewer than 2 headings.
+function jb_minimal_build_toc($content) {
+    // Ids already in the content: manual anchors are kept, generated ids avoid them.
+    preg_match_all('/(?<![\w-])id\s*=\s*(["\'])(.*?)\1/i', $content, $m);
+    $used  = array_flip($m[2]);
+    $items = array();
+    $idx   = 0;
+
+    $content = preg_replace_callback(
+        '/<h([23])(\s[^>]*)?>(.*?)<\/h\1>/is',
+        function ($h) use (&$used, &$items, &$idx) {
+            $attrs = isset($h[2]) ? $h[2] : '';
+            if (preg_match('/(?<![\w-])id\s*=\s*(["\'])(.*?)\1/i', $attrs, $idm)) {
+                $id = $idm[2];
+            } else {
+                // Index-based ids: unique by construction, no CJK slug issues.
+                do { $idx++; $id = 'toc-' . $idx; } while (isset($used[$id]));
+                $used[$id] = true;
+                $attrs .= ' id="' . esc_attr($id) . '"';
+            }
+            // Drop footnote markers (<sup>) so "Background¹" doesn't read "Background1".
+            $text = preg_replace('/<sup\b[^>]*>.*?<\/sup>/is', '', $h[3]);
+            $items[] = array(
+                'level' => (int) $h[1],
+                'id'    => $id,
+                'text'  => trim(wp_strip_all_tags($text)),
+            );
+            return '<h' . $h[1] . $attrs . '>' . $h[3] . '</h' . $h[1] . '>';
+        },
+        $content
+    );
+
+    if (count($items) < 2) return array('', $content);
+
+    $html = '<ol>';
+    $in_li = false; $in_sub = false;
+    foreach ($items as $it) {
+        $link = '<a href="#' . esc_attr($it['id']) . '">' . esc_html($it['text']) . '</a>';
+        if ($it['level'] === 2) {
+            if ($in_sub) { $html .= '</ol>'; $in_sub = false; }
+            if ($in_li)  { $html .= '</li>'; }
+            $html .= '<li>' . $link;
+            $in_li = true;
+        } else {
+            // An h3 before any h2 gets an empty parent <li> to keep the markup valid.
+            if (!$in_li)  { $html .= '<li>'; $in_li = true; }
+            if (!$in_sub) { $html .= '<ol>'; $in_sub = true; }
+            $html .= '<li>' . $link . '</li>';
+        }
+    }
+    if ($in_sub) $html .= '</ol>';
+    if ($in_li)  $html .= '</li>';
+    $html .= '</ol>';
+
+    $toc = '<nav class="toc" aria-label="' . esc_attr__('Table of contents', 'jb-minimal') . '">' . $html . '</nav>';
+    return array($toc, $content);
+}
+
 // === Fallback Menu ===
 function jb_minimal_fallback_menu() {
     $is_home  = is_front_page() || is_home();

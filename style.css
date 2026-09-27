@@ -486,6 +486,16 @@ li {
   border-top: 1px solid var(--jb-border, #e5e5e5);
 }
 
+.toc + .entry-content {
+  border-top: none;
+  padding-top: 0;
+}
+
+.entry-content {
+  border-top: 1px solid var(--jb-border, #e5e5e5);
+  padding-top: 1rem;
+}
+
 .toc ol {
   list-style: none;
   padding-left: 0;
